@@ -1,5 +1,22 @@
 import { useState } from 'react'
 
+const Person = (person) => <li>{person.props.name} {person.props.number}</li>
+
+const Phonebook = ({persons, search}) => {
+
+  const filterNames = search === ''
+                    ? persons
+                    : persons.filter(person => person.show)
+  return(
+    filterNames.map(person => 
+      <Person key={person.name} props={person}></Person>
+    )
+  )}
+
+const Filter = (props) => {
+  return(<input value={props.value} onChange={props.onChange}></input>)
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas'},
@@ -35,15 +52,11 @@ const App = () => {
     setPersons(persons)
   }
 
-  const filterNames = search === ''
-                    ? persons
-                    : persons.filter(person => person.show)
-
   return (
     <div>
       <h2>Phonebook</h2>
       <div>
-        filter shown with <input value={search} onChange={handleSearch}></input>
+        filter shown with <Filter value={search} onChange={handleSearch}></Filter>
       </div>
       <h3>Add a number</h3>
       <form onSubmit={addName}>
@@ -59,9 +72,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
         <ul>
-         {filterNames.map(person => 
-            <li key={person.name}>{person.name} {person.number}</li>
-          )}
+          <Phonebook persons={persons} search={search}></Phonebook>
         </ul>
     </div>
   )
