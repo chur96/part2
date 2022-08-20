@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
 import axios from 'axios'
-const baseUrl = 'http://localhost:3001/api/persons'
+const baseUrl = '/api/persons'
 
 const getAll = () => {
     const initialData = axios
