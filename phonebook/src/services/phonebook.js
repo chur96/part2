@@ -25,7 +25,7 @@ const update = (id, newObject) => {
 
 const deletePhone = (id) => {
     const initialData = axios
-                        .delete(`http://localhost:3001/persons/${id}`)
+                        .delete(`${baseUrl}/${id}`)
     return initialData
 }
 
