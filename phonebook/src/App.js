@@ -1,3 +1,4 @@
+import { eventWrapper } from '@testing-library/user-event/dist/utils'
 import { useState, useEffect } from 'react'
 import phonebookService from './services/phonebook'
 
@@ -12,7 +13,7 @@ const App = () => {
     phonebookService
       .getAll()
       .then(initialPhone => setPersons(initialPhone))
-  },[persons.length])
+  },[])
 
   const addName = (event) => {
     event.preventDefault() 
@@ -41,6 +42,10 @@ const App = () => {
                     setMessage([`Added ${newPerson.name} to Phonebook`,'green'])
                     setTimeout(() => setMessage(['','']), 5000)
                   })
+                  .catch(error => {
+                    setMessage([error.response.data.error, 'red'])
+                    setTimeout(() => setMessage(['','']), 5000)
+                  })
 
     setNewName('')
     setNewNumber('')
@@ -48,20 +53,21 @@ const App = () => {
 
   const handleNameChange = (event) => setNewName(event.target.value)
   const handleNumberChange = (event) => setNewNumber(event.target.value)
-  const handleSearch = (event) => { 
+  const handleSearch = (event) => {
     setSearch(event.target.value)
     persons.forEach(person => {
       person.name.toLowerCase().includes(event.target.value.toLowerCase())
       ? person['show'] = true 
       : person['show'] = false
     })
-    setPersons(persons)
   }
 
   const Person = (person) => <li>{person.props.name} {person.props.number} 
                           <button onClick={() => {
                               phonebookService.deletePhone(person.props.id)
-                              setPersons([])
+                                .then(() => {
+                                  setPersons(persons.filter(p => p.id !== person.props.id))
+                                })
                             }}>Delete</button></li>
 
   const Phonebook = ({persons, search}) => {
